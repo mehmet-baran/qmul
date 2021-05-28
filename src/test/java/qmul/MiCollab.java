@@ -96,7 +96,8 @@ public class MiCollab {
         Thread.sleep(2000);
         File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         FileUtils.copyFile(screenshot, new File(System.getProperty("user.dir") + "\\Screenshot1.png"));
-        BufferedImage expected = ImageIO.read(new File(System.getProperty("user.dir") + "\\beforecall.png"));
+        BufferedImage expected = ImageIO.read(new File("src/test/resources/beforecall.png"));
+        //src/test/resources/beforecall.png
         BufferedImage actual = ImageIO.read(screenshot);
         if (isSimilar(actual, expected)) {
             boolean flag = true;
