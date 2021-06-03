@@ -89,22 +89,7 @@ public class MiCollab {
     }
 
     @Test
-    public void
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    incomingCallTest() throws InterruptedException, IOException {
+    public void incomingCallTest() throws InterruptedException, IOException {
         int testDurationInMinutes = 2;
         LocalTime startTime = LocalTime.now();
         LocalTime finalTime = startTime.plus(Duration.ofMinutes(testDurationInMinutes));
