@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.*;
 import java.util.concurrent.TimeUnit;
 
 public class MiCollab {
@@ -83,39 +84,78 @@ public class MiCollab {
         String xpath1 = "//Image[@AutomationId='PART_image'][1]";
         driver.findElement(By.xpath(xpath1)).click();
         Thread.sleep(2000);
-        actions.keyDown(Keys.CONTROL).sendKeys(Keys.NUMPAD1).perform();
+        actions.keyDown(Keys.CONTROL).sendKeys(Keys.NUMPAD2).perform();
         actions.release().sendKeys(Keys.CONTROL).perform();
     }
 
     @Test
-    public void incomingCallTest() throws InterruptedException, IOException {
+    public void
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    incomingCallTest() throws InterruptedException, IOException {
+        int testDurationInMinutes = 2;
+        LocalTime startTime = LocalTime.now();
+        LocalTime finalTime = startTime.plus(Duration.ofMinutes(testDurationInMinutes));
         Thread.sleep(20000);
         driver.findElement(By.name("System")).click();
-        Actions action = new Actions(driver);
-        action.sendKeys(Keys.ENTER).perform();
-        Thread.sleep(2000);
-        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        FileUtils.copyFile(screenshot, new File(System.getProperty("user.dir") + "\\Screenshot1.png"));
-        BufferedImage expected = ImageIO.read(new File("src/test/resources/beforecall.png"));
-        //src/test/resources/beforecall.png
-        BufferedImage actual = ImageIO.read(screenshot);
-        if (isSimilar(actual, expected)) {
-            boolean flag = true;
-            while (flag) {
-                Actions actions = new Actions(driver);
-                actions.sendKeys(Keys.ENTER).perform();
-                actions.keyDown(Keys.CONTROL).sendKeys(Keys.NUMPAD2).perform();
-                actions.release().sendKeys(Keys.CONTROL).perform();
+        driver.findElement(By.name("Maximize")).click();
+        int numberOfCalls = 0;
+        while (Duration.between(finalTime, LocalTime.now()).getSeconds() < 0) {
+            Actions action = new Actions(driver);
+            action.sendKeys(Keys.ENTER).perform();
+            Thread.sleep(2000);
+            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(screenshot, new File(System.getProperty("user.dir") + "\\Screenshot1.png"));
+            BufferedImage expected = ImageIO.read(new File("src/test/resources/beforecall.png"));
+            BufferedImage actual = ImageIO.read(screenshot);
+            if (isSimilar(actual, expected)) {
+                boolean flag = true;
+                while (flag) {
+                    Actions actions = new Actions(driver);
+                    actions.sendKeys(Keys.ENTER).perform();
+                    actions.keyDown(Keys.CONTROL).sendKeys(Keys.NUMPAD1).perform();
+                    actions.release().sendKeys(Keys.CONTROL).perform();
+                    Thread.sleep(1000);
+                    File screenshot1 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                    FileHandler.copy(screenshot1, new File(System.getProperty("user.dir") + "\\Screenshot2.png"));
+                    BufferedImage actual2 = ImageIO.read(screenshot1);
+                    actions.sendKeys(Keys.ENTER).perform();
+                    actions.keyDown(Keys.CONTROL).sendKeys(Keys.NUMPAD1).perform();
+                    actions.release().sendKeys(Keys.CONTROL).perform();
+                    flag = isSimilar(actual2, expected);
+                    if(isSimilar(actual2,expected)){
+                        System.out.println("Waiting for the call...");
+                    }
+                    else System.out.println("Call answered");
+                }
+                //call duration
+                Thread.sleep(3000);
+                File screenshot2 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                FileHandler.copy(screenshot2, new File(System.getProperty("user.dir") + "\\callInProgress.png"));
+                Thread.sleep(3000);
+                action.keyDown(Keys.CONTROL).sendKeys(Keys.NUMPAD2).perform();
+                action.release().sendKeys(Keys.CONTROL).perform();
+                numberOfCalls++;
+                File screenshot3 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+                FileHandler.copy(screenshot3, new File(System.getProperty("user.dir") + "\\afterCall.png"));
                 Thread.sleep(1000);
-                File screenshot1 = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-                FileHandler.copy(screenshot1, new File(System.getProperty("user.dir") + "\\Screenshot2.png"));
-                BufferedImage actual2 = ImageIO.read(screenshot1);
-                actions.sendKeys(Keys.ENTER).perform();
-                actions.keyDown(Keys.CONTROL).sendKeys(Keys.NUMPAD2).perform();
-                actions.release().sendKeys(Keys.CONTROL).perform();
-                flag = isSimilar(actual2, expected);
+                System.out.println("=============================" +
+                        "");
             }
         }
+        System.out.println("numberOfCalls = " + numberOfCalls);
         Thread.sleep(1000);
     }
 
@@ -149,7 +189,7 @@ public class MiCollab {
             }
             double avg = diff / (w1 * h1 * 3);
             percentage = (avg / 255) * 100;
-            System.out.println("Difference: " + percentage);
+            //System.out.println("Difference: " + percentage);
         }
         if (percentage > 2) {
             return false;
